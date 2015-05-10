@@ -1,0 +1,26 @@
+.main {
+  width: 100%;
+  margin: 0 auto;
+  text-align: center;
+}
+
+header {
+  margin: 80px auto;
+}
+
+header select {
+  margin-right: 20px;
+}
+
+.label {
+  margin-right: 20px;
+}
+
+.dropzone {
+  margin: auto;
+  cursor: pointer;
+}
+
+.placeholder {
+  margin-top: 145px;
+}

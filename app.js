@@ -77,6 +77,9 @@ class App extends React.Component {
             <option value="pdf">PDF</option>
             <option value="html">HTML</option>
             <option value="docx">Docx</option>
+            <option value="tex">LaTeX</option>
+            <option value="text">reStructuredText</option>
+            <option value="rtf">RTF</option>
           </select>
 
           <button onClick={this.convert.bind(this)} disabled={!file}>Convert</button>

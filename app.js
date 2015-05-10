@@ -3,6 +3,10 @@
 import React from 'react';
 import Dropzone from './components/drop';
 
+// node
+let path = node('path');
+let spawn = node('child_process').spawn;
+
 class App extends React.Component {
 
   displayName: 'App'
@@ -12,7 +16,11 @@ class App extends React.Component {
 
     this.state = {
       format: 'html',
-      file: null
+      file: null,
+      msg: {
+        type: null,
+        content: null
+      }
     }
   }
 
@@ -24,39 +32,31 @@ class App extends React.Component {
 
   convert() {
     let { format, file } = this.state;
-    var spawn = node('child_process').spawn;
-
-    // var pdc = node('pdc');
-    // var fs = node('fs');
-
-    // var content = fs.readFileSync(files[0].path).toString();
-    // pdc(content, 'markdown', format, function(err, result) {
-    //   if (err) {
-    //     throw err;
-    //     return;
-    //   }
-
-    //   fs.writeFile(`test.${format}`, result, function(err) {
-    //     console.log('write file success', `test.${format}`);
-    //   });
-    // });
-
-    let path = node('path');
     let base = path.basename(file.path, path.extname(file.path));
 
     // pandoc resume.md -o resume.pdf
-    var ps = spawn('pandoc', [file.path, '-o', `${base}.${format}`]);
+    let ps = spawn('pandoc', [file.path, '-o', `${base}.${format}`]);
 
-    ps.stdout.on('data', function (data) {
+    ps.stdout.on('data', (data) => {
       console.log('stdout: ' + data);
     });
 
-    ps.stderr.on('data', function (data) {
-      console.log('stderr: ' + data);
+    ps.stderr.on('data', (data) => {
+      this.setState({
+        msg: {
+          type: 'err',
+          content: 'Convert Failed!' + data
+        }
+      });
     });
 
-    ps.on('close', function (code) {
-      console.log('child process exited with code ' + code);
+    ps.on('close', (code) => {
+      this.setState({
+        msg: {
+          type: 'success',
+          content: 'Convert success!'
+        }
+      });
     });
   }
 
@@ -67,22 +67,36 @@ class App extends React.Component {
   }
 
   render() {
-    let { format } = this.state;
+    let { file, format, msg } = this.state;
 
     return (
-      <div>
-        <section>
+      <div className='main'>
+        <header>
+          <span className='label'>Convert file into:</span>
           <select defaultValue={format} onChange={this.setFormat.bind(this)}>
             <option value="pdf">PDF</option>
             <option value="html">HTML</option>
             <option value="docx">Docx</option>
           </select>
-        </section>
 
-        <button onClick={this.convert.bind(this)}>Convert</button>
-        <Dropzone onDrop={this.onDrop.bind(this)} multiple={false} size={150} >
-          <div>Try dropping some files here, or click to select files to upload.</div>
-        </Dropzone>
+          <button onClick={this.convert.bind(this)} disabled={!file}>Convert</button>
+
+          { msg.content &&
+            <span style={{color: msg.type === 'err' ? 'red' : 'green', marginLeft: '20px'}}>{ msg.content }</span>
+          }
+
+        </header>
+
+        <main>
+          <Dropzone onDrop={this.onDrop.bind(this)} multiple={false} size={300} >
+            { file &&
+              <div className='placeholder'>{path.basename(file.path)}</div>
+            }
+            { !file &&
+              <div className='placeholder'>Select the file you want to convert.</div>
+            }
+          </Dropzone>
+        </main>
       </div>
     )
   }

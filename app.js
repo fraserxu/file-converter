@@ -32,10 +32,12 @@ class App extends React.Component {
 
   convert() {
     let { format, file } = this.state;
-    let base = path.basename(file.path, path.extname(file.path));
 
+    let parsedPath = path.parse(file.path);
+    // write the file to the same directory
+    let dist = path.resolve(parsedPath.dir, `${parsedPath.name}.${format}`);
     // pandoc resume.md -o resume.pdf
-    let ps = spawn('pandoc', [file.path, '-o', `${base}.${format}`]);
+    let ps = spawn('pandoc', [file.path, '-o', dist]);
 
     ps.stdout.on('data', (data) => {
       console.log('stdout: ' + data);

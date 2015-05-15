@@ -20,9 +20,10 @@ app.on('ready', function() {
   // Create the browser window.
   mainWindow = new BrowserWindow({width: 1000, height: 600});
 
- mainWindow.openDevTools({
-  detach: true
- })
+  // toggle dev tool
+  // mainWindow.openDevTools({
+  //   detach: true
+  // });
 
   // and load the index.html of the app.
   mainWindow.loadUrl('file://' + __dirname + '/index.html');

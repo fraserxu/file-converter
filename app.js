@@ -11,8 +11,8 @@ class App extends React.Component {
 
   displayName: 'App'
 
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
 
     this.state = {
       format: 'html',
@@ -59,6 +59,16 @@ class App extends React.Component {
           content: 'Convert success!'
         }
       });
+
+      // clean up msg after 3s.
+      setTimeout(() => {
+        this.setState({
+          msg: {
+            type: null,
+            content: null
+          }
+        });
+      }, 3000);
     });
   }
 
@@ -75,6 +85,7 @@ class App extends React.Component {
       <div className='main'>
         <header>
           <span className='label'>Convert file into:</span>
+
           <select defaultValue={format} onChange={this.setFormat.bind(this)}>
             <option value="pdf">PDF</option>
             <option value="html">HTML</option>
@@ -89,7 +100,6 @@ class App extends React.Component {
           { msg.content &&
             <span style={{color: msg.type === 'err' ? 'red' : 'green', marginLeft: '20px'}}>{ msg.content }</span>
           }
-
         </header>
 
         <main>
